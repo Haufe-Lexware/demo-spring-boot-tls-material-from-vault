@@ -1,0 +1,28 @@
+spring:
+  application:
+    name: demo-backend
+
+  cloud:
+    vault:
+      enabled: true
+      host: ${vault_server_host:localhost}
+      port: ${vault_server_port:8200}
+      scheme: ${vault_server_scheme:https}
+      connection-timeout: 5000
+      read-timeout: 15000
+      fail-fast: true
+      config:
+        order: -10
+
+      authentication: APPROLE
+      app-role:
+        role-id: ${vault_approle_role_id}
+        secret-id: ${vault_approle_secret_id}
+        app-auth-path: approle
+
+      generic:
+        enabled: false
+
+    config:
+      # We picked up a dependency on the config client - let's turn it off
+      enabled: false

@@ -1,0 +1,100 @@
+server:
+  port: 8080
+
+  ssl:
+    # by default we insist on a secure connection w/ client authentication;
+    # add the profile no-vault if you need insecure connections (e.g., for local development)
+    enabled: true
+
+    # insist on TLS client authentication (note: our typical TLS client is the API gateway, not the API client
+    #clientAuth: want
+
+    # we support the current version of TLS only
+    protocol: TLSv1.2
+
+    # accept only cipher suites recommended by the BSI (BSI Technical Recommendation TR-021002-2, sect. 3.3.1)
+    ciphers:
+      - TLS_ECDHE_ECDSA_WITH_AES_256_GCM_SHA384
+      - TLS_ECDHE_ECDSA_WITH_AES_128_GCM_SHA256
+      - TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+      - TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
+      - TLS_DHE_RSA_WITH_AES_256_GCM_SHA384
+      - TLS_DHE_RSA_WITH_AES_128_GCM_SHA256
+      - TLS_DHE_DSS_WITH_AES_256_GCM_SHA384
+      - TLS_DHE_DSS_WITH_AES_128_GCM_SHA256
+      - TLS_ECDHE_ECDSA_WITH_AES_256_CBC_SHA384
+      - TLS_ECDHE_ECDSA_WITH_AES_128_CBC_SHA256
+      - TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384
+      - TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256
+      - TLS_DHE_RSA_WITH_AES_256_CBC_SHA256
+      - TLS_DHE_RSA_WITH_AES_128_CBC_SHA256
+      - TLS_DHE_DSS_WITH_AES_256_CBC_SHA256
+      - TLS_DHE_DSS_WITH_AES_128_CBC_SHA256
+
+    # the path to or URL of the server keystore that holds the server private key and certificate;
+    # used only if VaultPkiConfiguration could not load a server certificate (plus key) from vault.
+    keyStore: ${BACKEND_TLS_KEYSTORE:}
+
+    # the type of the server keystore;
+    #
+    # don't use JKS, it is mostly obsolete. Plausible options are JCEKS or PKCS12; the latter will
+    # become the default keystore type in Java 9.
+    keyStoreType: JCEKS
+
+    # the passphrase required to access the server keystore
+    keyStorePassword: ${vault_tls_keystore_password}
+
+    # the alias of the server key in the server key store.
+    #
+    # Strictly speaking, the alias is only required if the server keystore contains more than one key. As long
+    # as the alias is correct, it does not hurt to specify it, though.
+    #
+    # NOTE: If the key store's type treats aliases case insensitively, then it is important to specify the
+    # alias here in all-lowercase. Otherwise connection attempts will fail without obvious reasons.
+    # In order to avoid this issue alltogether, we recommend to stick with all-lowercase aliases.
+    # (JCEKS aliases are case-insensitive, PKCS12 aliases are case-sensitive.)
+    keyAlias: backendkey
+
+    # the passphrase required to access the private server key
+    keyPassword: ${vault_tls_key_password}
+
+    # the path to or URL of the truststore that holds the certificates trusted for client authentication;
+    # used only if VaultPkiConfig could not load a trust store from vault.
+    # If blank, then VaultPkiConfig falls back to the Java runtime's default truststore.
+    trustStore: ${BACKEND_TLS_TRUSTSTORE:}
+
+    # the passphrase required to access the truststore
+    trustStorePassword: ${vault_tls_truststore_password}
+
+    # the type of the truststore;
+    #
+    # don't use JKS, it is mostly obsolete. Plausible options are JCEKS or PKCS12; the latter will
+    # become the default keystore type in Java 9.
+    trustStoreType: JCEKS
+
+
+haufe:
+  cloud:
+    vault:
+
+      # Configuration for VaultPkiConfig
+      pki:
+
+        # flag that must be true or Spring Boot won't instantiate VaultPkiConfig
+        enabled: true
+
+        # the role used when making vault issue a new certificate. (The role determines some configurations
+        # and constraints on the certificate.)
+        role: backend-service
+
+        # the name of the vault pki backend used
+        backend: backend-pki
+
+        # the common name server certificates are requested for
+        commonName: localhost
+
+        # whether certificates and keys should be cached in a vault generic backend
+        reuseValidCertificate: true
+
+        # the name of the generic backend used for caching certificates
+        cacheBackend: backend-pki-cache

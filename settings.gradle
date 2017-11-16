@@ -1,0 +1,5 @@
+rootProject.name = 'vault-pki-config'
+
+include 'demo-service-backend'
+include 'demo-service-frontend'
+include 'vault-tls-key-material-config'

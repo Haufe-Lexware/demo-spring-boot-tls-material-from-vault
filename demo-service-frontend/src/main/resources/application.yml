@@ -1,0 +1,21 @@
+server:
+  port: 8090
+
+haufe:
+  demo:
+    frontend:
+      backendRootUri: https://localhost:8080/
+
+  client:
+    ssl:
+      filesystem:
+        keyStore: ${FRONTEND_TLS_KEYSTORE}
+        trustStore: ${FRONTEND_TLS_TRUSTSTORE}
+        keyStorePassword: ${FRONTEND_TLS_KEYSTORE_PASSWORD}
+        trustStorePassword: ${FRONTEND_TLS_TRUSTSTORE_PASSWORD}
+        keyStoreType: ${FRONTEND_TLS_KEYSTORE_TYPE:JCEKS}
+      vault:
+        enabled: true
+        backend: frontend-pki-cache
+        keyStorePath: client/keystore
+        trustStorePath: client/truststore

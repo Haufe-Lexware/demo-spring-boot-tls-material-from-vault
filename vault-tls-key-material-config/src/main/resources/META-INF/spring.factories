@@ -1,0 +1,2 @@
+org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
+  com.haufe.spring.cloud.vault.config.tls.VaultPkiConfiguration

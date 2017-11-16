@@ -1,0 +1,35 @@
+spring:
+  application:
+    name: demo-backend
+
+  cloud:
+    vault:
+      enabled: true
+      host: ${vault_server_host:localhost}
+      port: ${vault_server_port:8200}
+      scheme: ${vault_server_scheme:https}
+      connection-timeout: 5000
+      read-timeout: 15000
+      fail-fast: true
+      config:
+        order: -10
+
+      authentication: APPROLE
+      app-role:
+        role-id: ${vault_approle_role_id}
+        secret-id: ${vault_approle_secret_id}
+        app-auth-path: approle
+
+      generic:
+        # This demo is _not_ about loading "normal" configuration properties (i.e., passwords etc.)
+        # from vault but demonstrates use of vault's PKI backend. If we keep the vault client's generic backend
+        # enabled, then we need to configure it properly and make sure the vault token obtained by the client
+        # grants access to the configured locations - no matter whether they in fact contain properties
+        # for this application; otherwise, the application won't start.
+        #
+        # Therefore, we better turn off the generic backend for this demo.
+        enabled: false
+
+    config:
+      # We picked up a dependency on the config client - let's turn it off
+      enabled: false

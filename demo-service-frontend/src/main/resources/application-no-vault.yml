@@ -1,0 +1,4 @@
+haufe:
+  demo:
+    frontend:
+      backendRootUri: http://localhost:8080/
