@@ -98,7 +98,7 @@ public class TrustedCertificates {
      * @throws TlsInitializationException the trust store could not be set up
      */
     public KeyStore createTrustStore() {
-        Try<KeyStore> trustStoreResult = Try.of(() -> {
+        try {
             KeyStore trustStore = KeyStore.getInstance(KeyStore.getDefaultType());
             trustStore.load(null, null); // required to initialize the trust store
 
@@ -108,10 +108,9 @@ public class TrustedCertificates {
                     .forEach(t -> addTrustedCertificateToStore(t._1, trustStore, t._2, certificateFactory));
 
             return trustStore;
-        });
-
-        return trustStoreResult.getOrElseThrow(
-                throwable -> new TlsInitializationException("failed to build trust store", throwable));
+        } catch (Exception exception) {
+            throw new TlsInitializationException("failed to build trust store", exception);
+        }
     }
 
     private void addTrustedCertificateToStore(TrustedCertificateEntry entry, KeyStore trustStore,
