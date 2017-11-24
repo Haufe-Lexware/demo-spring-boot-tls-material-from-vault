@@ -46,7 +46,6 @@ public class ServiceClientTLSConfig {
     @ConditionalOnBean(VaultOperations.class)
     @ConditionalOnExpression(
         "${spring.cloud.vault.enabled:true} and " +
-            //"${spring.cloud.vault.generic.enabled:true} and " +
             "${haufe.client.ssl.vault.enabled:true}")
     public TLSClientKeyMaterial tlsClientKeyMaterialFromVault(
             ServiceClientTLSProperties serviceClientTLSProperties, VaultOperations vaultOperations) {
